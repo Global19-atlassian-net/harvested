@@ -14,4 +14,6 @@ group :development, :test do
   gem 'factory_girl'
   gem 'yard'
   gem 'redcarpet'
+
+  gem 'rubocop'
 end
