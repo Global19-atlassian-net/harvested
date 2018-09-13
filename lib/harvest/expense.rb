@@ -18,7 +18,9 @@ module Harvest
 
     def as_json(args = {})
       super(args).to_hash.stringify_keys.tap do |hash|
-        hash[json_root].update("spent_at" => (spent_at.nil? ? nil : spent_at.xmlschema))
+        hash[json_root].update(
+          "spent_at" => (spent_at.nil? ? nil : spent_at.xmlschema)
+        )
         hash[json_root].delete("has_receipt")
         hash[json_root].delete("receipt_url")
       end

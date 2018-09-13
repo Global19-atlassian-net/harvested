@@ -11,7 +11,9 @@ describe 'harvest invoices' do
       cat.name.should == "Updated Category"
 
       harvest.invoice_categories.delete(cat)
-      harvest.invoice_categories.all.select {|c| c.name == "Updated Category" }.should == []
+      harvest.invoice_categories.all.select do |c|
+        c.name == "Updated Category"
+      end.should == []
     end
   end
 
@@ -19,7 +21,13 @@ describe 'harvest invoices' do
     cassette('invoice2') do
       client  = harvest.clients.create(FactoryGirl.attributes_for(:client))
 
-      invoice = Harvest::Invoice.new(FactoryGirl.attributes_for(:invoice, :client_id => client.id, update_line_items: true))
+      invoice = Harvest::Invoice.new(
+        FactoryGirl.attributes_for(
+          :invoice,
+          :client_id => client.id,
+          update_line_items: true
+        )
+      )
       invoice = harvest.invoices.create(invoice)
 
       invoice.subject.should == "Invoice for Joe's Stream Cleaning"
@@ -54,25 +62,32 @@ describe 'harvest invoices' do
       harvest.invoices.all.each {|i| harvest.invoices.delete(i.id)}
 
       invoice = Harvest::Invoice.new(
-        "subject"              => "Invoice for Frannie's Widgets",
-        "client_id"            => client.id,
-        "issued_at"            => "2014-01-01",
-        "due_at_human_format"  => "NET 10",
-        "currency"             => "United States Dollars - USD",
-        "number"               => 1000,
-        "notes"                => "Some notes go here",
-        "period_end"           => "2013-03-31",
-        "period_start"         => "2013-02-26",
-        "kind"                 => "free_form",
-        "state"                => "draft",
-        "purchase_order"       => nil,
-        "tax"                  => nil,
-        "tax2"                 => nil,
-        "kind"                 => "free_form",
-        "import_hours"         => "no",
-        "import_expenses"      => "no",
-        "line_items"           => [Harvest::LineItem.new("kind" => "Service", "description" => "One item", "quantity" => 200, "unit_price" => "12.00")],
-        "update_line_items"   => true
+        "subject" => "Invoice for Frannie's Widgets",
+        "client_id" => client.id,
+        "issued_at" => "2014-01-01",
+        "due_at_human_format" => "NET 10",
+        "currency" => "United States Dollars - USD",
+        "number" => 1000,
+        "notes" => "Some notes go here",
+        "period_end" => "2013-03-31",
+        "period_start" => "2013-02-26",
+        "kind" => "free_form",
+        "state" => "draft",
+        "purchase_order" => nil,
+        "tax" => nil,
+        "tax2" => nil,
+        "kind" => "free_form",
+        "import_hours" => "no",
+        "import_expenses" => "no",
+        "line_items" => [
+          Harvest::LineItem.new(
+            "kind" => "Service",
+            "description" => "One item",
+            "quantity" => 200,
+            "unit_price" => "12.00"
+          )
+        ],
+        "update_line_items" => true
       )
       invoice = harvest.invoices.create(invoice)
 
@@ -98,10 +113,14 @@ describe 'harvest invoices' do
       invoices = harvest.invoices.all(:status => 'draft', :page => 1)
       invoices.count.should == 1
 
-      invoices = harvest.invoices.all(:timeframe => {:from => '2014-01-01', :to => '2014-01-01'})
+      invoices = harvest.invoices.all(
+        :timeframe => {:from => '2014-01-01', :to => '2014-01-01'}
+      )
       invoices.count.should == 1
 
-      invoices = harvest.invoices.all(:timeframe => {:from => '19690101', :to => '19690101'})
+      invoices = harvest.invoices.all(
+        :timeframe => {:from => '19690101', :to => '19690101'}
+      )
       invoices.count.should == 0
 
       invoices = harvest.invoices.all(:updated_since => Date.today)

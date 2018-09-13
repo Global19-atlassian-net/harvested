@@ -3,7 +3,8 @@ module Harvest
   #
   # == Fields
   # [+id+] (READONLY) the id of the contact
-  # [+client_id+] (REQUIRED) the id of the client this contact is associated with
+  # [+client_id+] (REQUIRED) the id of the client this contact is
+  #   associated with
   # [+first_name+] (REQUIRED) the first name of the contact
   # [+last_name+] (REQUIRED) the last name of the contact
   # [+email+] the email of the contact

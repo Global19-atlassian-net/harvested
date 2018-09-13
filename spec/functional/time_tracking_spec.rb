@@ -4,11 +4,20 @@ describe 'harvest time tracking' do
   it 'allows adding, updating and removing entries' do
     cassette("time_tracking1") do
       client = harvest.clients.create("name" => "Jane's Car Shop")
-      project = harvest.projects.create("name" => "Tracking Project", "client_id" => client.id)
+      project = harvest.projects.create(
+        "name" => "Tracking Project",
+        "client_id" => client.id
+      )
       harvest.projects.create_task(project, "A billable task")
       task = harvest.tasks.all.detect {|t| t.name == "A billable task"}
 
-      entry = harvest.time.create("notes" => "Test api support", "hours" => 3, "spent_at" => "2009/12/28", "task_id" => task.id, "project_id" => project.id)
+      entry = harvest.time.create(
+        "notes" => "Test api support",
+        "hours" => 3,
+        "spent_at" => "2009/12/28",
+        "task_id" => task.id,
+        "project_id" => project.id
+      )
       entry.notes.should == "Test api support"
 
       entry.notes = "Upgraded to JSON"
@@ -29,12 +38,24 @@ describe 'harvest time tracking' do
         "password"   => "secure"
       )
       client = harvest.clients.create("name" => "Kim's Tux Shop")
-      project = harvest.projects.create("name" => "Other User Tracking Project", "client_id" => client.id)
+      project = harvest.projects.create(
+        "name" => "Other User Tracking Project",
+        "client_id" => client.id
+      )
       harvest.user_assignments.create("project" => project, "user" => user)
       harvest.projects.create_task(project, "A billable task for tuxes")
-      task = harvest.tasks.all.detect {|t| t.name == "A billable task for tuxes"}
+      task = harvest.tasks.all.detect do |t|
+        t.name == "A billable task for tuxes"
+      end
 
-      entry = harvest.time.create("notes" => "Test api support", "hours" => 3, "spent_at" => "2009/12/28", "task_id" => task.id, "project_id" => project.id, "of_user" => user.id)
+      entry = harvest.time.create(
+        "notes" => "Test api support",
+        "hours" => 3,
+        "spent_at" => "2009/12/28",
+        "task_id" => task.id,
+        "project_id" => project.id,
+        "of_user" => user.id
+      )
       harvest.time.all(Time.utc(2009, 12, 28), user).should == [entry]
 
       entry.notes = "Updating notes"
@@ -52,11 +73,20 @@ describe 'harvest time tracking' do
   it 'allows toggling of timers' do
     cassette("time_tracking3") do
       client = harvest.clients.create("name" => "Jane's Used Car Shop")
-      project = harvest.projects.create("name" => "Tracking Project", "client_id" => client.id)
+      project = harvest.projects.create(
+        "name" => "Tracking Project",
+        "client_id" => client.id
+      )
       harvest.projects.create_task(project, "A billable task")
       task = harvest.tasks.all.detect {|t| t.name == "A billable task"}
 
-      entry = harvest.time.create("notes" => "Test api support", "hours" => 3, "spent_at" => "2009/12/28", "task_id" => task.id, "project_id" => project.id)
+      entry = harvest.time.create(
+        "notes" => "Test api support",
+        "hours" => 3,
+        "spent_at" => "2009/12/28",
+        "task_id" => task.id,
+        "project_id" => project.id
+      )
 
       # start existing timer
       started_entry = harvest.time.toggle(entry.id)
@@ -71,13 +101,19 @@ describe 'harvest time tracking' do
   it 'allows retrieving trackable projects and tasks' do
     cassette("time_tracking4") do
       client = harvest.clients.create("name" => "Bobby's Coffee Shop")
-      project = harvest.projects.create("name" => "Bobby's Trackable Project", "client_id" => client.id)
+      project = harvest.projects.create(
+        "name" => "Bobby's Trackable Project",
+        "client_id" => client.id
+      )
       harvest.projects.create_task(project, "A billable task for Bobby")
 
       trackable_projects = harvest.time.trackable_projects
-      trackable_project = trackable_projects.find {|p| p.name == "Bobby's Trackable Project" }
+      trackable_project = trackable_projects.find do |p|
+        p.name == "Bobby's Trackable Project"
+      end
       trackable_projects.first.client.should == "Bobby's Coffee Shop"
-      trackable_projects.first.tasks.first.name.should == "A billable task for Bobby"
+      trackable_projects.first.tasks.first.name.
+        should == "A billable task for Bobby"
     end
   end
 

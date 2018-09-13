@@ -42,7 +42,8 @@ module Harvest
     end
 
     module ClassMethods
-      # This sets the API path so the API collections can use them in an agnostic way
+      # This sets the API path so the API collections can use them in an
+      # agnostic way
       # @return [void]
       def api_path(path = nil)
         @_api_path ||= path
@@ -58,7 +59,9 @@ module Harvest
 
       def parse(json)
         parsed = String === json ? JSON.parse(json) : json
-        Array.wrap(parsed).map {|attrs| skip_json_root? ? new(attrs) : new(attrs[json_root])}
+        Array.wrap(parsed).map do |attrs|
+          skip_json_root? ? new(attrs) : new(attrs[json_root])
+        end
       end
 
       def json_root
@@ -93,18 +96,21 @@ module Harvest
     module Utility
       class << self
 
-        # Both methods are shamelessly ripped from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/inflector/inflections.rb
+        # Both methods are shamelessly ripped from
+        # https://github.com/rails/rails/blob/master/activesupport/lib/active_support/inflector/inflections.rb
 
         # Removes the module part from the expression in the string.
         #
         # Examples:
-        #   "ActiveRecord::CoreExtensions::String::Inflections".demodulize # => "Inflections"
+        #   # => "Inflections"
+        #   "ActiveRecord::CoreExtensions::String::Inflections".demodulize
         #   "Inflections".demodulize
         def demodulize(class_name_in_module)
           class_name_in_module.to_s.gsub(/^.*::/, '')
         end
 
-        # Makes an underscored, lowercase form from the expression in the string.
+        # Makes an underscored, lowercase form from the expression in the
+        # string.
         #
         # Changes '::' to '/' to convert namespaces to paths.
         #
@@ -112,8 +118,8 @@ module Harvest
         #   "ActiveRecord".underscore         # => "active_record"
         #   "ActiveRecord::Errors".underscore # => active_record/errors
         #
-        # As a rule of thumb you can think of +underscore+ as the inverse of +camelize+,
-        # though there are cases where that does not hold:
+        # As a rule of thumb you can think of +underscore+ as the inverse of
+        # +camelize+, though there are cases where that does not hold:
         #
         #   "SSLError".underscore.camelize # => "SslError"
         def underscore(camel_cased_word)

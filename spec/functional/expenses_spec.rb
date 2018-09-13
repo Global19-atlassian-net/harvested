@@ -16,51 +16,55 @@ describe 'harvest expenses' do
         category.name.should == "Travel"
 
         harvest.expense_categories.delete(category)
-        harvest.expense_categories.all.select{|e| e.name == "Travel" }.should == []
+        harvest.expense_categories.all.select do |e|
+          e.name == "Travel"
+        end.should == []
       end
     end
   end
-  
-  
+
   it "allows adding, updating, and removing expenses" do
     cassette("expenses2") do
-      category       = harvest.expense_categories.create(
-        "name"       => "Something Deductible",
+      category = harvest.expense_categories.create(
+        "name" => "Something Deductible",
         "unit_price" => 100,
-        "unit_name"  => "deduction"
+        "unit_name" => "deduction"
       )
 
-      client      = harvest.clients.create(
-        "name"    => "Tom's Butcher",
+      client = harvest.clients.create(
+        "name" => "Tom's Butcher",
         "details" => "Building API Widgets across the country"
       )
 
-      project       = harvest.projects.create(
-        "name"      => "Expensing Project",
-        "active"    => true,
-        "notes"     => "project to test the api",
+      project = harvest.projects.create(
+        "name" => "Expensing Project",
+        "active" => true,
+        "notes" => "project to test the api",
         "client_id" => client.id
       )
-      
-      expense                 = harvest.expenses.create(
-        "notes"               => "Drive to Chicago",
-        "total_cost"          => 75.0,
-        "spent_at"            => Time.utc(2009, 12, 28),
+
+      expense = harvest.expenses.create(
+        "notes" => "Drive to Chicago",
+        "total_cost" => 75.0,
+        "spent_at" => Time.utc(2009, 12, 28),
         "expense_category_id" => category.id,
-        "project_id"          => project.id
+        "project_id" => project.id
       )
       expense.notes.should == "Drive to Chicago"
-      
+
       expense.notes = "Off to Chicago"
       expense = harvest.expenses.update(expense)
       expense.notes.should == "Off to Chicago"
-      
+
       harvest.expenses.delete(expense)
-      harvest.expenses.all(Time.utc(2009, 12, 28)).select {|e| e.notes == "Off to Chicago"}.should == []
+      harvest.expenses.all(Time.utc(2009, 12, 28)).select do |e|
+        e.notes == "Off to Chicago"
+      end.should == []
     end
   end
 end
 
+# rubocop:disable Metrics/LineLength
 # Copied from feature
 # @wip
 # Scenario: Attaching a receipt to an Expense
@@ -81,4 +85,4 @@ end
 #   Then there should be an expense "Drive to Chicago" on "12/28/2009"
 #   When I attach the receipt "./support/fixtures/receipt.png" to the expense "Drive to Chicago" on "12/28/2009"
 #   Then there should be a receipt "./support/fixtures/receipt.png" attached to the expense "Drive to Chicago" on "12/28/2009"
-
+# rubocop:enable Metrics/LineLength

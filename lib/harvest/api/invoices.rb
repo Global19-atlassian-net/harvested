@@ -19,12 +19,14 @@ module Harvest
       # @return [Array<Harvest::Invoice>] an array of invoices
       def all(options = {})
         query = {}
-        query[:status]        = options[:status]        if options[:status]
-        query[:page]          = options[:page]          if options[:page]
-        query[:updated_since] = options[:updated_since] if options[:updated_since]
+        query[:status] = options[:status] if options[:status]
+        query[:page] = options[:page] if options[:page]
+        if options[:updated_since]
+          query[:updated_since] = options[:updated_since]
+        end
         if options[:timeframe]
           query[:from] = options[:timeframe][:from]
-          query[:to]   = options[:timeframe][:to]
+          query[:to] = options[:timeframe][:to]
         end
 
         response = request(:get, credentials, "/invoices", :query => query)

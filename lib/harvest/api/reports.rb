@@ -5,42 +5,90 @@ module Harvest
       TIME_FORMAT = '%Y%m%d'
 
       def time_by_project(project, start_date, end_date, options = {})
-        query = { from: start_date.strftime(TIME_FORMAT), to: end_date.strftime(TIME_FORMAT) }
-        query[:user_id]       = options.delete(:user).to_i if options[:user]
-        query[:billable]      = (options.delete(:billable) ? "yes" : "no") unless options[:billable].nil?
-        query[:updated_since] = options.delete(:updated_since).to_s if options[:updated_since]
+        query = {
+          from: start_date.strftime(TIME_FORMAT),
+          to: end_date.strftime(TIME_FORMAT)
+        }
+        query[:user_id] = options.delete(:user).to_i if options[:user]
+        unless options[:billable].nil?
+          query[:billable] = (options.delete(:billable) ? "yes" : "no")
+        end
+        if options[:updated_since]
+          query[:updated_since] = options.delete(:updated_since).to_s
+        end
         query.update(options)
 
-        response = request(:get, credentials, "/projects/#{project.to_i}/entries", query: query)
-        Harvest::TimeEntry.parse(JSON.parse(response.body).map {|h| h["day_entry"]})
+        response = request(
+          :get,
+          credentials,
+          "/projects/#{project.to_i}/entries",
+          query: query
+        )
+        Harvest::TimeEntry.parse(
+          JSON.parse(response.body).map {|h| h["day_entry"]}
+        )
       end
 
       def time_by_user(user, start_date, end_date, options = {})
-        query = { from: start_date.strftime(TIME_FORMAT), to: end_date.strftime(TIME_FORMAT) }
-        query[:project_id]    = options.delete(:project).to_i if options[:project]
-        query[:billable]      = (options.delete(:billable) ? "yes" : "no") unless options[:billable].nil?
-        query[:updated_since] = options.delete(:updated_since).to_s if options[:updated_since]
+        query = {
+          from: start_date.strftime(TIME_FORMAT),
+          to: end_date.strftime(TIME_FORMAT)
+        }
+        query[:project_id] = options.delete(:project).to_i if options[:project]
+        unless options[:billable].nil?
+          query[:billable] = (options.delete(:billable) ? "yes" : "no")
+        end
+        if options[:updated_since]
+          query[:updated_since] = options.delete(:updated_since).to_s
+        end
         query.update(options)
 
-        response = request(:get, credentials, "/people/#{user.to_i}/entries", query: query)
-        Harvest::TimeEntry.parse(JSON.parse(response.body).map {|h| h["day_entry"]})
+        response = request(
+          :get,
+          credentials,
+          "/people/#{user.to_i}/entries",
+          query: query
+        )
+        Harvest::TimeEntry.parse(
+          JSON.parse(response.body).map {|h| h["day_entry"]}
+        )
       end
 
       def expenses_by_user(user, start_date, end_date, options = {})
-        query = { from: start_date.strftime(TIME_FORMAT), to: end_date.strftime(TIME_FORMAT) }
-        query[:updated_since] = options.delete(:updated_since).to_s if options[:updated_since]
+        query = {
+          from: start_date.strftime(TIME_FORMAT),
+          to: end_date.strftime(TIME_FORMAT)
+        }
+        if options[:updated_since]
+          query[:updated_since] = options.delete(:updated_since).to_s
+        end
         query.update(options)
 
-        response = request(:get, credentials, "/people/#{user.to_i}/expenses", query: query)
+        response = request(
+          :get,
+          credentials,
+          "/people/#{user.to_i}/expenses",
+          query: query
+        )
         Harvest::Expense.parse(response.parsed_response)
       end
 
       def expenses_by_project(project, start_date, end_date, options = {})
-        query = { from: start_date.strftime(TIME_FORMAT), to: end_date.strftime(TIME_FORMAT) }
-        query[:updated_since] = options.delete(:updated_since).to_s if options[:updated_since]
+        query = {
+          from: start_date.strftime(TIME_FORMAT),
+          to: end_date.strftime(TIME_FORMAT)
+        }
+        if options[:updated_since]
+          query[:updated_since] = options.delete(:updated_since).to_s
+        end
         query.update(options)
 
-        response = request(:get, credentials, "/projects/#{project.to_i}/expenses", query: query)
+        response = request(
+          :get,
+          credentials,
+          "/projects/#{project.to_i}/expenses",
+          query: query
+        )
         Harvest::Expense.parse(response.parsed_response)
       end
 

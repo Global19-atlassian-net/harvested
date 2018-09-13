@@ -70,7 +70,10 @@ describe 'harvest users' do
         )
 
 
-        assignment = harvest.user_assignments.create("project" => project, "user" => user)
+        assignment = harvest.user_assignments.create(
+          "project" => project,
+          "user" => user
+        )
 
         assignment.hourly_rate = 100
         assignment = harvest.user_assignments.update(assignment)

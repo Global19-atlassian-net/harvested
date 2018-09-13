@@ -3,7 +3,11 @@ require 'spec_helper'
 describe Harvest::Invoice do
   context 'line_items' do
     it 'parses csv into objects' do
-      invoice = Harvest::Invoice.new(:line_items => "kind,description,quantity,unit_price,amount,taxed,taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,100\nService,def,1.00,20.00,20.0,false,false,101\n")
+      invoice = Harvest::Invoice.new(
+        :line_items => "kind,description,quantity,unit_price,amount,taxed," \
+          "taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,100\n" \
+          "Service,def,1.00,20.00,20.0,false,false,101\n"
+      )
       invoice.line_items.count.should == 2
       line_item = invoice.line_items.first
 
@@ -12,7 +16,11 @@ describe Harvest::Invoice do
     end
 
     it 'parses csv into objects w/o projects' do
-      invoice = Harvest::Invoice.new(:line_items => "kind,description,quantity,unit_price,amount,taxed,taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,\nService,def,1.00,20.00,20.0,false,false,\n")
+      invoice = Harvest::Invoice.new(
+        :line_items => "kind,description,quantity,unit_price,amount,taxed," \
+          "taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,\n" \
+          "Service,def,1.00,20.00,20.0,false,false,\n"
+      )
       invoice.line_items.count.should == 2
       line_item = invoice.line_items.first
 
@@ -26,8 +34,16 @@ describe Harvest::Invoice do
     end
 
     it 'accepts rich objects' do
-      Harvest::Invoice.new(:line_items => [Harvest::LineItem.new(:kind => "Service")]).line_items.count.should == 1
-      Harvest::Invoice.new(:line_items => Harvest::LineItem.new(:kind => "Service")).line_items.count.should == 1
+      Harvest::Invoice.new(
+        :line_items => [
+          Harvest::LineItem.new(:kind => "Service")
+        ]
+      ).line_items.count.should == 1
+      Harvest::Invoice.new(
+        :line_items => Harvest::LineItem.new(
+          :kind => "Service"
+        )
+      ).line_items.count.should == 1
     end
 
     it 'accepts nil' do
@@ -37,13 +53,20 @@ describe Harvest::Invoice do
 
   context "as_json" do
     it 'only updates line items remotely if it the invoice is told to' do
-      invoice = Harvest::Invoice.new(:line_items => "kind,description,quantity,unit_price,amount,taxed,taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,\nService,def,1.00,20.00,20.0,false,false,\n")
+      invoice = Harvest::Invoice.new(
+        :line_items => "kind,description,quantity,unit_price,amount,taxed," \
+          "taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,\n" \
+          "Service,def,1.00,20.00,20.0,false,false,\n"
+      )
       invoice.line_items.count.should == 2
       invoice.line_items.first.kind.should == "Service"
       invoice.as_json["invoice"].keys.should_not include("csv_line_items")
 
       invoice.update_line_items = true
-      invoice.as_json["invoice"]["csv_line_items"].should == "kind,description,quantity,unit_price,amount,taxed,taxed2,project_id\nService,Abc,200,12.00,2400.0,false,false,\nService,def,1.00,20.00,20.0,false,false,\n"
+      invoice.as_json["invoice"]["csv_line_items"].should == "kind," \
+        "description,quantity,unit_price,amount,taxed,taxed2,project_id\n" \
+        "Service,Abc,200,12.00,2400.0,false,false,\nService,def,1.00,20.00," \
+        "20.0,false,false,\n"
     end
   end
 end

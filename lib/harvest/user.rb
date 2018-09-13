@@ -9,7 +9,8 @@ module Harvest
   # [+last_name+] the last name for the user
   # [+telephone+] the telephone for the user
   # [+department] the department for the user
-  # [+has_access_to_all_future_projects+] whether the user should be added to future projects by default
+  # [+has_access_to_all_future_projects+] whether the user should be added to
+  #   future projects by default
   # [+hourly_rate+] what the default hourly rate for the user is
   # [+admin?+] whether the user is an admin
   # [+contractor?+] whether the user is a contractor
@@ -34,7 +35,8 @@ module Harvest
     # Sets the timezone for the user. This can be done in a variety of ways.
     #
     # == Examples
-    #   user.timezone = :cst # the easiest way. CST, EST, MST, and PST are supported
+    #   # the easiest way. CST, EST, MST, and PST are supported
+    #   user.timezone = :cst
     #
     #   user.timezone = 'america/chicago' # a little more verbose
     #

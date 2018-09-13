@@ -4,7 +4,9 @@ require 'vcr'
 require 'factory_girl'
 require 'byebug'
 
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require File.expand_path(f) }
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |f|
+  require File.expand_path(f)
+end
 
 VCR.configure do |c|
   c.cassette_library_dir = '.cassettes'

@@ -8,8 +8,14 @@ Gem::Specification.new do |spec|
   spec.version       = Harvest::VERSION
   spec.authors       = ["Zach Moazeni"]
   spec.email         = ["zach.moazeni@gmail.com"]
-  spec.summary       = "A Ruby Wrapper for the Harvest API http://www.getharvest.com/"
-  spec.description   = "Harvested wraps the Harvest API concisely without the use of Rails dependencies. More information about the Harvest API can be found on their website (http://www.getharvest.com/api). For support hit up the Mailing List (http://groups.google.com/group/harvested)"
+  spec.summary       = "A Ruby Wrapper for the Harvest API " \
+                       "http://www.getharvest.com/"
+  spec.description   = "Harvested wraps the Harvest API concisely without " \
+                       "the use of Rails dependencies. More information " \
+                       "about the Harvest API can be found on their " \
+                       "website (http://www.getharvest.com/api). For " \
+                       "support hit up the Mailing List " \
+                       "(http://groups.google.com/group/harvested)"
   spec.homepage      = "http://github.com/zmoazeni/harvested"
   spec.license       = "MIT"
 

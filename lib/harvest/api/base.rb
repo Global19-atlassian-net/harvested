@@ -37,7 +37,11 @@ module Harvest
           }
 
           credentials.set_authentication(httparty_options)
-          response = HTTParty.send(method, "#{credentials.host}#{path}", httparty_options)
+          response = HTTParty.send(
+            method,
+            "#{credentials.host}#{path}",
+            httparty_options
+          )
           params[:response] = response.inspect.to_s
 
           case response.code
@@ -48,7 +52,11 @@ module Harvest
           when 401
             raise Harvest::AuthenticationFailed.new(response, params)
           when 404
-            raise Harvest::NotFound.new(response, params, "Do you have sufficient privileges?")
+            raise Harvest::NotFound.new(
+              response,
+              params,
+              "Do you have sufficient privileges?"
+            )
           when 500
             raise Harvest::ServerError.new(response, params)
           when 502

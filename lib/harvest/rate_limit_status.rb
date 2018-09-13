@@ -6,8 +6,10 @@ module Harvest
   # [+last_access_at+]  The last registered request
   # [+count+] The current number of requests registered
   # [+timeframe_limit+] The amount of seconds before a rate limit refresh occurs
-  # [+max_calls+] The number of requests you can make within the +timeframe_limit+
-  # [+lockout_seconds+] If you exceed the rate limit, how long you will be locked out from Harvest
+  # [+max_calls+] The number of requests you can make within the
+  #   +timeframe_limit+
+  # [+lockout_seconds+] If you exceed the rate limit, how long you will be
+  #   locked out from Harvest
   class RateLimitStatus < Hashie::Mash
     include Harvest::Model
 

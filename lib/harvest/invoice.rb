@@ -2,22 +2,27 @@ module Harvest
 
   # == Fields
   # [+due_at+] when the invoice is due
-  # [+due_at_human_format+] when the invoice is due in human representation (e.g., due upon receipt) overrides +due_at+
+  # [+due_at_human_format+] when the invoice is due in human representation
+  #   (e.g., due upon receipt) overrides +due_at+
   # [+client_id+] (REQUIRED) the client id of the invoice
   # [+currency+] the invoice currency
   # [+issued_at+] when the invoice was issued
   # [+subject+] subject line for the invoice
   # [+notes+] notes on the invoice
   # [+number+] invoice number
-  # [+kind+] (REQUIRED) the type of the invoice +free_form|project|task|people|detailed+
+  # [+kind+] (REQUIRED) the type of the invoice
+  #   +free_form|project|task|people|detailed+
   # [+projects_to_invoice+] comma separated project ids to gather data from
-  # [+import_hours+] import hours from +project|task|people|detailed+ one of +yes|no+
-  # [+import_expenses+] import expenses from +project|task|people|detailed+ one of +yes|no+
+  # [+import_hours+] import hours from +project|task|people|detailed+ one of
+  #   +yes|no+
+  # [+import_expenses+] import expenses from +project|task|people|detailed+
+  #   one of +yes|no+
   # [+period_start+] start of the invoice period
   # [+period_end+] end of the invoice period
   # [+expense_period_start+] start of the invoice expense period
   # [+expense_period_end+] end of the invoice expense period
-  # [+csv_line_items+] csv formatted line items for the invoice +kind,description,quantity,unit_price,amount,taxed,taxed2,project_id+
+  # [+csv_line_items+] csv formatted line items for the invoice
+  #   +kind,description,quantity,unit_price,amount,taxed,taxed2,project_id+
   # [+created_at+] (READONLY) when the invoice was created
   # [+updated_at+] (READONLY) when the invoice was updated
   # [+id+] (READONLY) the id of the invoice
@@ -70,7 +75,9 @@ module Harvest
       unless raw_or_rich.nil?
         @line_items = case raw_or_rich
         when String
-          @line_items = decode_csv(raw_or_rich).map {|row| Harvest::LineItem.new(row) }
+          @line_items = decode_csv(raw_or_rich).map do |row|
+            Harvest::LineItem.new(row)
+          end
         else
           raw_or_rich
         end
@@ -79,7 +86,9 @@ module Harvest
 
     def as_json(*options)
       json = super(*options)
-      json[json_root]["csv_line_items"] = encode_csv(@line_items) if update_line_items
+      if update_line_items
+        json[json_root]["csv_line_items"] = encode_csv(@line_items)
+      end
       json
     end
 
@@ -88,14 +97,25 @@ module Harvest
         csv = CSV.parse(string)
         headers = csv.shift
         csv.map! {|row| headers.zip(row) }
-        csv.map {|row| row.inject({}) {|h, tuple| h.update(tuple[0] => tuple[1]) } }
+        csv.map do |row|
+          row.inject({}) {|h, tuple| h.update(tuple[0] => tuple[1]) }
+        end
       end
 
       def encode_csv(line_items)
         if line_items.empty?
           ""
         else
-          header = %w(kind description quantity unit_price amount taxed taxed2 project_id)
+          header = %w(
+            kind
+            description
+            quantity
+            unit_price
+            amount
+            taxed
+            taxed2
+            project_id
+          )
 
           CSV.generate do |csv|
             csv << header
